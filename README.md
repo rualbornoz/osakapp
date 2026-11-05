@@ -1,6 +1,6 @@
 # osakapp
 App de aprendizaje básico de japonés 
 
-<a href=“https://osakap.com/“>Osakap.com</a>
+<a href=“https://osakapp.com/“>Osakapp.com</a>
 
 Licencia MIT. 
