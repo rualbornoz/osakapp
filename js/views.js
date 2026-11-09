@@ -48,7 +48,7 @@ window.OSAKA = window.OSAKA || {};
   V.inicio = function () {
     var s = O.state(), name = s.profile.name;
     var all = O.overall(), nx = O.nextLesson();
-    var h = '<div class="hero"><div><h1 class="h1">' + (name ? 'Hola, ' + e(name) : 'Hola') + '</h1><p class="sub">Aprende japonés básico, paso a paso, y prepárate para el JLPT.</p></div>';
+    var h = '<div class="hero"><div><h1 class="h1">Aprendamos japonés básico, paso a paso</h1><p class="sub">Y prepárate para el test JLPT</p></div>';
     if (nx) {
       var m = O.moduleById(nx.mod);
       h += '<div class="card mint stack"><div class="small sub">' + (all.seen ? 'Continúa donde quedaste' : 'Empieza aquí') + '</div>' +
