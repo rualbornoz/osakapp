@@ -60,7 +60,8 @@ window.OSAKA = window.OSAKA || {};
           'Las ilustraciones son planas y generadas para este proyecto.',
           'La voz usa el sintetizador de tu navegador; si no tienes voz japonesa instalada, verás la transcripción.'
         ] },
-        { t: 'p', x: 'N4 y N3 llegarán más adelante.' }
+        { t: 'p', x: 'N4 y N3 llegarán más adelante.' },
+        { t: 'credit', pre: 'Osakapp Inc. | Creado por ', name: 'Rubén Albornoz', href: 'https://rualbornoz.framer.website/' }
       ]
     }
   };
