@@ -13,16 +13,16 @@
   function shell() {
     root.innerHTML =
       '<div class="app">' +
-      '<header class="top"><a class="brand" href="#inicio" aria-label="Osakapp, inicio"><span class="logo" lang="ja" aria-hidden="true">お</span><span>Osakapp</span></a>' +
+      '<div class="appbar"><header class="top"><a class="brand" href="#inicio" aria-label="Osakapp, inicio"><span class="logo" lang="ja" aria-hidden="true">お</span><span>Osakapp</span></a>' +
       '</header>' +
-      '<main id="view" class="view" tabindex="-1"></main>' +
       '<nav class="bottom" aria-label="Principal">' +
       '<a href="#inicio" data-nav="inicio">' + ic.home + '<span>Inicio</span></a>' +
       '<a href="#ruta" data-nav="ruta">' + ic.route + '<span>Ruta</span></a>' +
       '<a href="#practica" data-nav="practica">' + ic.prac + '<span>Práctica</span></a>' +
       '<a href="#progreso" data-nav="progreso">' + ic.prog + '<span>Progreso</span></a>' +
       '<a href="#menu" data-nav="menu">' + ic.user + '<span>Menú</span></a>' +
-      '</nav></div>';
+      '</nav></div>' +
+      '<main id="view" class="view" tabindex="-1"></main></div>';
     view = root.querySelector('#view');
   }
 
@@ -53,6 +53,10 @@
       p = { nav: 'inicio', r: '<div class="card"><p>Algo salió mal al abrir esta pantalla.</p><a class="btn primary" href="#inicio">Volver al inicio</a></div>' };
     }
     var r = p.r, html = typeof r === 'string' ? r : r.html;
+    var hash = (location.hash || '').replace(/^#/, '');
+    var lesson = hash.indexOf('l-') === 0 ? O.lessons[hash.slice(2)] : null;
+    var narrow = /^(menu|perfil|g-|acerca|copia|reiniciar|t-)/.test(hash) || (lesson && lesson.type === 'form');
+    view.className = 'view' + (narrow ? ' narrow' : '');
     view.innerHTML = html;
     if (r && r.after) r.after(view);
     Array.prototype.forEach.call(root.querySelectorAll('.bottom a'), function (a) {

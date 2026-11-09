@@ -32,6 +32,7 @@ window.OSAKA = window.OSAKA || {};
     arr.forEach(function (b) {
       if (b.t === 'h') h += '<h2 class="h2" style="margin-top:20px">' + e(b.x) + '</h2>';
       else if (b.t === 'p') h += '<p>' + e(b.x) + '</p>';
+      else if (b.t === 'credit') h += '<p class="small sub">' + e(b.pre) + '<a href="' + e(b.href) + '" target="_blank" rel="noopener noreferrer">' + e(b.name) + '</a></p>';
       else if (b.t === 'tip') h += '<div class="tip"><b>Consejo · </b>' + e(b.x) + '</div>';
       else if (b.t === 'ul') h += '<ul>' + b.items.map(function (i) { return '<li>' + e(i) + '</li>'; }).join('') + '</ul>';
       else if (b.t === 'table') {
@@ -47,7 +48,7 @@ window.OSAKA = window.OSAKA || {};
   V.inicio = function () {
     var s = O.state(), name = s.profile.name;
     var all = O.overall(), nx = O.nextLesson();
-    var h = '<div>' + '<h1 class="h1">' + (name ? 'Hola, ' + e(name) : 'Hola') + '</h1><p class="sub">Aprende japonés básico, paso a paso, y prepárate para el JLPT.</p></div>';
+    var h = '<div class="hero"><div><h1 class="h1">' + (name ? 'Hola, ' + e(name) : 'Hola') + '</h1><p class="sub">Aprende japonés básico, paso a paso, y prepárate para el JLPT.</p></div>';
     if (nx) {
       var m = O.moduleById(nx.mod);
       h += '<div class="card mint stack"><div class="small sub">' + (all.seen ? 'Continúa donde quedaste' : 'Empieza aquí') + '</div>' +
@@ -57,14 +58,14 @@ window.OSAKA = window.OSAKA || {};
     } else {
       h += '<div class="card mint stack"><div class="h2" style="margin:0">¡Terminaste todas las lecciones!</div><p>Practica con los tests para afianzar lo aprendido.</p><a class="btn primary block" href="#practica">Ir a práctica</a></div>';
     }
-    h += '<h2 class="h2">Módulos</h2><div class="grid2">';
+    h += '</div><h2 class="h2">Módulos</h2><div class="grid2 gmods">';
     O.modules.forEach(function (m) {
       var p = O.progress(m.id);
       h += '<a class="card stack" href="#m-' + m.id + '" style="color:inherit"><div style="font-weight:800">' + e(m.title) + '</div>' + bar(p.pct) + '<div class="small sub">' + p.seen + ' de ' + p.total + '</div></a>';
     });
     h += '</div>';
-    h += '<h2 class="h2">Prepárate para el JLPT</h2><a class="pcard" href="#t-n5-completo"><div class="ic">N5</div><div class="grow" style="flex:1"><div class="t">Simulacro N5</div><div class="s">25 preguntas originales</div></div></a>';
-    h += '<div class="row" style="gap:8px"><span class="tag soon">N4 · Pronto</span><span class="tag soon">N3 · Pronto</span></div>';
+    h += '<h2 class="h2">Prepárate para el JLPT</h2><div class="jlpt"><a class="pcard" href="#t-n5-completo"><div class="ic">N5</div><div class="grow" style="flex:1"><div class="t">Simulacro N5</div><div class="s">25 preguntas originales</div></div></a>';
+    h += '<div class="row" style="gap:8px"><span class="tag soon">N4 · Pronto</span><span class="tag soon">N3 · Pronto</span></div></div>';
     return h;
   };
 
@@ -74,7 +75,7 @@ window.OSAKA = window.OSAKA || {};
     var h = head('Ruta de aprendizaje', 'Cada lección que abres se marca como vista.');
     O.modules.forEach(function (m) {
       var p = O.progress(m.id);
-      h += '<div class="card stack"><div class="row between"><a href="#m-' + m.id + '" style="color:var(--ink);font-weight:800;font-size:18px">' + e(m.title) + '</a><span class="small sub">' + p.seen + '/' + p.total + '</span></div><div class="dots">';
+      h += '<div class="card stack tile"><div class="row between"><a href="#m-' + m.id + '" style="color:var(--ink);font-weight:800;font-size:18px">' + e(m.title) + '</a><span class="small sub">' + p.seen + '/' + p.total + '</span></div><div class="dots">';
       m.lessons.forEach(function (l, i) {
         var cls = O.isSeen(l.id) ? 'seen' : (nx && nx.id === l.id ? 'next' : '');
         h += '<a class="num ' + cls + '" href="#l-' + e(l.id) + '" aria-label="' + e(l.title) + (O.isSeen(l.id) ? ' (vista)' : '') + '">' + (i + 1) + '</a>';
@@ -90,7 +91,7 @@ window.OSAKA = window.OSAKA || {};
     if (!m) return V.ruta();
     var p = O.progress(id);
     var h = back('#ruta', 'Ruta') + head(m.title, m.desc);
-    h += '<div class="stack"><div>' + bar(p.pct) + '</div><div class="small sub">' + nextText(p) + '</div></div><div>';
+    h += '<div class="stack"><div>' + bar(p.pct) + '</div><div class="small sub">' + nextText(p) + '</div></div><div class="list">';
     m.lessons.forEach(function (l, i) {
       var seen = O.isSeen(l.id);
       h += '<a class="lrow" href="#l-' + e(l.id) + '"><span class="num ' + (seen ? 'seen' : '') + '">' + (i + 1) + '</span><span style="flex:1;min-width:0"><span class="t" style="display:block">' + e(l.title) + '</span><span class="sub small jp" lang="ja">' + e(l.sub) + '</span></span>' + (seen ? '<span class="tag">Vista</span>' : '') + '</a>';
@@ -107,7 +108,7 @@ window.OSAKA = window.OSAKA || {};
       h += '<div class="kgrid" lang="ja">' + d.chars.map(function (c) {
         return '<button class="kcell" type="button" data-say="' + e(c[0]) + '" aria-label="' + e(c[0]) + ', ' + e(c[1]) + '"><b>' + e(c[0]) + '</b>' + rj(c[1]) + '</button>';
       }).join('') + '</div><p class="small sub">Toca un carácter para escucharlo.</p>';
-      h += '<h2 class="h2" style="margin-top:12px">Palabras de ejemplo</h2><div>';
+      h += '<h2 class="h2" style="margin-top:12px">Palabras de ejemplo</h2><div class="list">';
       d.words.forEach(function (w) {
         var art = O.artFor[w[0]];
         var th = art ? O.artSvg(art, w[2]) : e(w[3] || w[0].charAt(0));
@@ -115,45 +116,45 @@ window.OSAKA = window.OSAKA || {};
       });
       h += '</div>';
     } else if (l.type === 'vocab') {
-      h += '<div class="grid2">' + d.words.map(function (w) {
+      h += '<div class="grid2 vgrid">' + d.words.map(function (w) {
         return '<div class="vcard"><div class="art">' + O.artSvg(w.art, w.es) + '</div><div class="nm" lang="ja">' + e(w.jp) + '</div><div class="meta"><div>' +
           (w.kanji ? '<div class="jp" lang="ja">' + e(w.kanji) + '</div>' : '') + '<div>' + rj(w.ro) + '</div><div class="small">' + e(w.es) + '</div></div>' + say(w.jp) + '</div></div>';
       }).join('') + '</div>';
-      h += '<h2 class="h2">Frases de ejemplo</h2><div>' + d.words.map(function (w) { return exRow(w.ex); }).join('') + '</div>';
+      h += '<h2 class="h2">Frases de ejemplo</h2><div class="list">' + d.words.map(function (w) { return exRow(w.ex); }).join('') + '</div>';
     } else if (l.type === 'numbers') {
-      h += '<div class="grid3" lang="ja">' + d.basic.map(function (n) {
+      h += '<div class="grid3 ngrid" lang="ja">' + d.basic.map(function (n) {
         return '<button class="kcell" type="button" data-say="' + e(n[1].split(' / ')[0]) + '" aria-label="' + e(n[0]) + '"><b style="font-size:28px">' + e(n[0]) + '</b><span class="jp" style="font-size:15px">' + e(n[1]) + '</span>' + rj(n[2]) + '<span class="jp" style="font-size:18px">' + e(n[3]) + '</span></button>';
       }).join('') + '</div>';
-      h += '<h2 class="h2">Números más grandes</h2><div class="grid2" lang="ja">' + d.big.map(function (n) {
+      h += '<h2 class="h2">Números más grandes</h2><div class="grid2 ngrid2" lang="ja">' + d.big.map(function (n) {
         return '<div class="card"><b>' + e(n[0]) + '</b> <span class="jp">' + e(n[3]) + '</span><div class="jp" style="font-size:18px">' + e(n[1]) + '</div>' + rj(n[2]) + '</div>';
       }).join('') + '</div>';
       h += '<h2 class="h2">Qué recordar</h2><div class="card prose"><ul>' + d.tips.map(function (t) { return '<li>' + e(t) + '</li>'; }).join('') + '</ul></div>';
     } else if (l.type === 'counters') {
       h += d.map(function (c) {
-        return '<div class="card stack"><div class="row"><div class="ptile" lang="ja">' + e(c.sym) + '</div><div class="grow" style="flex:1"><div style="font-weight:800">' + e(c.name) + '</div><div class="small sub">' + e(c.use) + '</div></div></div>' +
+        return '<div class="card stack tile"><div class="row"><div class="ptile" lang="ja">' + e(c.sym) + '</div><div class="grow" style="flex:1"><div style="font-weight:800">' + e(c.name) + '</div><div class="small sub">' + e(c.use) + '</div></div></div>' +
           '<div class="card soft jp" lang="ja" style="font-size:16px">' + e(c.forms) + '</div>' + exRow(c.ex) + '</div>';
       }).join('');
     } else if (l.type === 'kanji') {
       h += '<p class="small sub">No hay una lista oficial de kanji por nivel. Esta selección reúne caracteres frecuentes y útiles para empezar.</p>';
       h += d.items.map(function (k) {
-        return '<div class="card"><div class="row" style="align-items:flex-start"><div class="kbig" lang="ja">' + e(k[0]) + '</div><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:18px">' + e(k[3]) + '</div>' +
+        return '<div class="card tile"><div class="row" style="align-items:flex-start"><div class="kbig" lang="ja">' + e(k[0]) + '</div><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:18px">' + e(k[3]) + '</div>' +
           '<div class="kv">On: <b lang="ja">' + e(k[1]) + '</b></div><div class="kv">Kun: <b lang="ja">' + e(k[2]) + '</b></div>' +
           '<div style="margin-top:6px"><span class="jp" lang="ja" style="font-weight:700">' + e(k[4][0]) + '</span> ' + rj(k[4][1]) + ' <span class="small sub">· ' + e(k[4][2]) + '</span></div></div>' + say(k[4][0]) + '</div></div>';
       }).join('');
     } else if (l.type === 'verbs') {
       h += '<div class="card mint"><p>' + e(d.intro) + '</p></div>';
-      h += d.verbs.map(function (v) {
+      h += '<div class="list vlist">' + d.verbs.map(function (v) {
         return '<div class="card stack"><div class="row between"><div><span class="w-jp" lang="ja">' + e(v.d) + '</span>' + (v.k ? '<span class="w-k" lang="ja">' + e(v.k) + '</span>' : '') + '<div>' + rj(v.dr) + ' <span class="small sub">· ' + e(v.es) + '</span></div></div>' + '<span class="tag">Grupo ' + v.g + '</span></div>' +
           '<div class="vtri"><div><small>Diccionario</small><span class="jp" lang="ja">' + e(v.d) + '</span></div><div><small>Formal</small><span class="jp" lang="ja">' + e(v.m) + '</span>' + rj(v.mr) + '</div><div><small>Forma て</small><span class="jp" lang="ja">' + e(v.t) + '</span>' + rj(v.tr) + '</div></div>' + exRow(v.ex) + '</div>';
-      }).join('');
+      }).join('') + '</div>';
     } else if (l.type === 'form') {
       h += blocks(d.blocks);
     } else if (l.type === 'particle') {
       h += d.items.map(function (p) {
-        return '<div class="card stack"><div class="row"><div class="ptile" lang="ja">' + e(p.p) + '</div><div style="flex:1;min-width:0"><div style="font-weight:800">' + e(p.name) + '</div>' + rj(p.ro) + '</div></div><p>' + e(p.use) + '</p><div>' + p.ex.map(exRow).join('') + '</div></div>';
+        return '<div class="card stack tile"><div class="row"><div class="ptile" lang="ja">' + e(p.p) + '</div><div style="flex:1;min-width:0"><div style="font-weight:800">' + e(p.name) + '</div>' + rj(p.ro) + '</div></div><p>' + e(p.use) + '</p><div>' + p.ex.map(exRow).join('') + '</div></div>';
       }).join('');
     } else if (l.type === 'phrases') {
-      h += '<div>' + d.phrases.map(function (p) {
+      h += '<div class="list">' + d.phrases.map(function (p) {
         return '<div class="ex"><div style="flex:1;min-width:0"><div class="jp" lang="ja" style="font-size:19px;font-weight:700">' + e(p[0]) + '</div><div>' + rj(p[1]) + '</div><div>' + e(p[2]) + '</div>' + (p[3] ? '<div class="small sub" style="margin-top:4px">' + e(p[3]) + '</div>' : '') + '</div>' + say(p[0]) + '</div>';
       }).join('') + '</div>';
     }
@@ -182,11 +183,11 @@ window.OSAKA = window.OSAKA || {};
     function last(k) { var a = s.tests[k]; if (!a || !a.length) return ''; var r = a[a.length - 1]; return ' · último: ' + r.s + '/' + r.n; }
     var h = head('Práctica', 'Preguntas con explicación al final de cada respuesta.');
     h += '<a class="card mint stack" href="#t-n5-completo" style="color:inherit"><div class="small sub">Estilo JLPT</div><div class="h2" style="margin:0">Simulacro completo N5</div><div class="sub">25 preguntas originales de vocabulario, gramática, lectura y audición' + e(last('n5-completo')) + '</div></a>';
-    h += '<h2 class="h2" style="margin-top:8px">Por sección N5</h2><div class="stack">';
+    h += '<h2 class="h2" style="margin-top:8px">Por sección N5</h2><div class="list">';
     O.testSections.forEach(function (t) {
       h += '<a class="pcard" href="#t-n5-' + t.id + '"><div class="ic">' + e(t.icon) + '</div><div style="flex:1;min-width:0"><div class="t">' + e(t.title) + '</div><div class="s">' + e(t.sub) + e(last('n5-' + t.id)) + '</div></div></a>';
     });
-    h += '</div><h2 class="h2">Por tema</h2><div class="stack">';
+    h += '</div><h2 class="h2">Por tema</h2><div class="list">';
     O.practice.forEach(function (p) {
       h += '<a class="pcard" href="#t-' + p.id + '"><div class="ic" lang="ja">' + e(p.ic) + '</div><div style="flex:1;min-width:0"><div class="t">' + e(p.title) + '</div><div class="s">' + e(p.sub) + e(last(p.id)) + '</div></div></a>';
     });
@@ -224,7 +225,7 @@ window.OSAKA = window.OSAKA || {};
     var all = O.overall(), s = O.state();
     var h = head('Tu progreso', 'Se actualiza solo cuando abres una lección.');
     h += '<div class="card mint stack"><div class="row between"><div><div class="res-score" style="text-align:left;font-size:44px">' + all.pct + '%</div><div class="sub">' + all.seen + ' de ' + all.total + ' lecciones vistas</div></div></div>' + bar(all.pct) + '</div>';
-    h += '<h2 class="h2" style="margin-top:8px">Por módulo</h2><div class="stack">';
+    h += '<h2 class="h2" style="margin-top:8px">Por módulo</h2><div class="list">';
     O.modules.forEach(function (m) {
       var p = O.progress(m.id);
       h += '<a class="card stack" href="#m-' + m.id + '" style="color:inherit"><div class="row between"><b>' + e(m.title) + '</b><b>' + p.pct + '%</b></div>' + bar(p.pct) + '<div class="small sub">' + p.seen + ' de ' + p.total + ' lecciones</div></a>';
@@ -234,7 +235,7 @@ window.OSAKA = window.OSAKA || {};
     if (!keys.length) {
       h += '<div class="card"><p class="sub">Aún no has hecho ningún test. Prueba uno desde la sección Práctica.</p><a class="btn primary" style="margin-top:12px" href="#practica">Ir a práctica</a></div>';
     } else {
-      h += '<div class="stack">';
+      h += '<div class="list">';
       keys.forEach(function (k) {
         var a = s.tests[k], r = a[a.length - 1], best = a.reduce(function (m, x) { return Math.max(m, Math.round((x.s / x.n) * 100)); }, 0);
         var name = O.testNames[k] || (k.indexOf('q-') === 0 && O.lessons[k.slice(2)] ? 'Lección: ' + O.lessons[k.slice(2)].title : k);
