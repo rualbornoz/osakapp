@@ -192,3 +192,59 @@ textarea.input { min-height: 140px; resize: vertical; font-family: ui-monospace,
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 110px; background: var(--ink); color: #fff; border-radius: 999px; padding: 10px 18px; font-weight: 700; font-size: 14px; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---------- Listas y composición reutilizable ---------- */
+.list { display: grid; gap: 10px; }
+.list > * { margin-top: 0 !important; }
+.hero > * + * { margin-top: 16px; }
+.jlpt > * + * { margin-top: 12px; }
+.appbar { display: block; }
+
+/* ---------- Tablet y escritorio (≥ 700px): ancho fluido hasta 1024px ---------- */
+@media (min-width: 700px) {
+  .app { max-width: 1024px; padding-left: max(clamp(24px, 4vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(24px, 4vw, 48px), env(safe-area-inset-right, 0px)); }
+  main { padding-bottom: 130px; }
+  .h1 { font-size: 34px; }
+  .view { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; align-items: start; }
+  .view > * { grid-column: 1 / -1; margin-top: 0 !important; }
+  .view > .tile { grid-column: auto; height: 100%; }
+  .view > .back, .view > .btn.block { justify-self: start; }
+  .view > .btn.block { width: auto; min-width: 280px; }
+  .view > .h2 { margin-top: 8px !important; }
+  .view.narrow { max-width: 760px; margin-left: auto; margin-right: auto; width: 100%; }
+  .view.narrow > .btn.block { width: 100%; }
+  .prose { max-width: 760px; }
+  .list { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .view.narrow .list { grid-template-columns: 1fr; }
+
+  /* Inicio */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+  .hero > * + * { margin-top: 0; }
+  .hero .h1 { font-size: 40px; }
+  .gmods { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .jlpt { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .jlpt > * + * { margin-top: 0; }
+  .jlpt .pcard { width: 360px; max-width: 100%; }
+
+  /* Lecciones */
+  .vgrid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+  .ngrid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  .ngrid2 { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .kgrid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px; }
+
+  .vlist { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 16px; }
+
+  /* Tests */
+  .view.narrow .opts { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Escritorio (≥ 900px): la navegación pasa arriba, junto al logo ---------- */
+@media (min-width: 900px) {
+  main { padding-bottom: 64px; }
+  .appbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; position: sticky; top: 0; z-index: 10; background: var(--bg); padding: 14px 0; margin-bottom: 8px; }
+  .top { padding: 0; }
+  .bottom { position: static; transform: none; width: auto; bottom: auto; display: flex; gap: 4px; padding: 6px; border-radius: 999px; box-shadow: 0 4px 18px rgba(43, 42, 51, .10); }
+  .bottom a { flex-direction: row; gap: 8px; padding: 10px 18px; border-radius: 999px; font-size: 15px; }
+  .bottom a svg { width: 22px; height: 22px; }
+  .toast { bottom: 32px; }
+}
